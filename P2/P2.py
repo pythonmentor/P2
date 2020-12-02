@@ -1,4 +1,5 @@
 import requests
+import csv
 from bs4 import BeautifulSoup
 infos = []
 url ="http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
@@ -24,4 +25,7 @@ if response.ok:
 
    print(infos)
    
-  
+with open("information.csv","w",newline="") as f:
+    ecriture = csv.writer(f)
+    ecriture.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+    ecriture.writerow([url, infos[0], infos[1], infos[2], infos[3], infos[4], infos[5]])
