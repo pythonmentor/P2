@@ -1,4 +1,5 @@
 import requests
+import csv
 from bs4 import BeautifulSoup
 infos = []
 url ="http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
@@ -9,28 +10,22 @@ response = requests.get(url)
 if response.ok:
    soup = BeautifulSoup(response.text, 'html.parser')
    title = soup.find('title')
+   infos.append(title.string)
    
-
-   #On fait une boucle pour récupérer toutes les balises td dans th. Puis avec l'objet string on convertit la liste en carachtére pour l'inserer dans la liste infos. 
-
-   #description = soup.findAll(id ="product_description")
-   #description = soup.find("table", {"div": 'product_description'}).find_all('p')
-   #print(description)
-   product_information = soup.find("table", {"class": 'table-striped'}).find_all('p')
-
-   
-
    ths = soup.findAll('tr')
    for th in ths:
        th = th.find('td')
-       info=th.string
-       infos.append(info)
-       
-   print(infos)
-
+       infos.append(th.string)
 
    dscs = soup.findAll('p')
-   print(dscs[4])
-   for dsc in dscs:
-      print(dsc)
-  
+   infos.append(dscs[3])
+
+   infos.append(soup.find('div',{'class':'item active'}).find('img')['src'])
+   
+
+   print(infos)
+   
+with open("information.csv","w",newline="") as f:
+    ecriture = csv.writer(f)
+    ecriture.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+    ecriture.writerow([url, infos[0], infos[1], infos[2], infos[3], infos[4], infos[5]])
