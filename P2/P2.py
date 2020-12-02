@@ -9,14 +9,12 @@ response = requests.get(url)
 if response.ok:
    soup = BeautifulSoup(response.text, 'html.parser')
    title = soup.find('title')
+   infos.append(title.string)
    
-   
-
    ths = soup.findAll('tr')
    for th in ths:
        th = th.find('td')
-       info=th.string
-       infos.append(info)
+       infos.append(th.string)
 
    dscs = soup.findAll('p')
    infos.append(dscs[3])
