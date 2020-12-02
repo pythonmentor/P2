@@ -19,6 +19,9 @@ if response.ok:
    dscs = soup.findAll('p')
    infos.append(dscs[3])
 
+   infos.append(soup.find('div',{'class':'item active'}).find('img')['src'])
+   
+
    print(infos)
-  
+   
   
