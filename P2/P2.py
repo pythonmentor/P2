@@ -22,19 +22,27 @@ if response.ok:
         th = tr.find('th')
         td = tr.find('td')
         if (th.string != "Product Type") and (th.string !="Tax"):
-           infos.append(td.string)
-           
+
+            if (th.string == "Price (excl. tax)") or (th.string == "Price (incl. tax)"):
+                infos.append(td.string[2:])
+            elif th.string == "Availability":
+                infos.append(td.string[10:-11])
+            else: infos.append(td.string)
 
   
    infos.append(soup.findAll('p')[3]) #Ajout de la déscription
 
 
-   infos.append(soup.find('div',{'class':'item active'}).find('img')['src']) #Ajout du lien de l'image 
+   infos.append(url + soup.find('div',{'class':'item active'}).find('img')['src'][5:]) #Ajout du lien de l'image 
    
    
+
+
 with open("information.csv","w",newline="") as f:
     ecriture = csv.writer(f)
     ecriture.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
-    ecriture.writerow([infos[0], infos[3], infos[1], infos[4], infos[5], infos[6], infos[8], infos[2], infos[7], infos[9]])
+   # ecriture.writerow([infos[0], infos[3], infos[1], infos[4], infos[5], infos[6], infos[8], infos[2], infos[7], infos[9]])
 
     [print(str([i]) + '\n') for i in infos]
+
+  
