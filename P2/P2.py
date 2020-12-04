@@ -6,9 +6,11 @@ infos = []
 host = 'http://books.toscrape.com/catalogue/'
 url ="http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 url2 ="http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
+url3 ="http://books.toscrape.com/"
 livres= []
 page = []
 scanp = []
+cat = []
 
 def scraping (url):
    #Initialisation de la connection de la page que nous voulons récuperer les informations.
@@ -68,12 +70,11 @@ def scan ():
 #La fonction permet de savoir il s'est la dernire page ou non, puis enregistre les liens qui seront envoyé à la fonc scan
 def scan_page (urlnbrdepage):
    i = 1 
-   while 1: 
+   while 1: #On référence la page, tant qu'on trouve la class 'next' on incrémente la page puis on modifie directement sa valeur (Utilisation du module urlparse pour segementer l'url.
       response = requests.get(urlnbrdepage)
-      if response.ok:
-         scanp.append(urlnbrdepage)
+      if response.ok:         
          soup = BeautifulSoup(response.text, 'html.parser')
-         if  soup.find('li', {'class':'next'})  is not None:
+         if  soup.find('li', {'class':'next'})  is not None: 
             urlnbrdepage = urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)        
             scanp.append(urlnbrdepage)
             i += 1
@@ -81,7 +82,20 @@ def scan_page (urlnbrdepage):
          else:
             return
 
+# On scan les cats du site puis on les enregistre dans la cat
+def scancat():
+    response = requests.get(url3)
+    if response.ok:
+          soup = BeautifulSoup(response.text, 'html.parser')
+          cats = soup.find('ul', {'class':'nav nav-list'}).findAll('li')
+          for i in cats:
 
+              cat.append(url3 + i.find('a')['href'])
+          print(cat)
+    
 
-scan_page("http://books.toscrape.com/catalogue/category/books/sequential-art_5/")
+scancat () 
+
+scan_page("http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html")
 print(scanp)
+
