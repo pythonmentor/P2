@@ -49,11 +49,11 @@ def scraping (url):
        ecriture.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
        ecriture.writerow([infos[0], infos[3], infos[1], infos[4], infos[5], infos[6], infos[8], infos[2], infos[7], infos[9]])
 
-       [print(str([i]) + '\n') for i in infos]
+       #[print(str([i]) + '\n') for i in infos]
 
   
 
-
+#Sur la page on référence tous les livres, est on stock leurs URL dans la list livre
 def scan ():
    response = requests.get(url2)
    if response.ok:
@@ -65,6 +65,7 @@ def scan ():
        
           print(livres)
  
+#La fonction permet de savoir il s'est la dernire page ou non, puis enregistre les liens qui seront envoyé à la fonc scan
 def scan_page (urlnbrdepage):
    i = 1 
    while 1: 
