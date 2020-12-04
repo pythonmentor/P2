@@ -1,12 +1,14 @@
 import requests
 import csv
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 infos = []
 host = 'http://books.toscrape.com/catalogue/'
 url ="http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 url2 ="http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
 livres= []
-nbrdepage = []
+page = []
+scanp = []
 
 def scraping (url):
    #Initialisation de la connection de la page que nous voulons récuperer les informations.
@@ -63,15 +65,22 @@ def scan ():
        
           print(livres)
  
-def scan_page ():
-   response = requests.get("http://books.toscrape.com/catalogue/category/books/sequential-art_5/page-3.html")
-   if response.ok:
-      soup = BeautifulSoup(response.text, 'html.parser')
-      rslt = soup.find('ul',{'class':'pager'})
-      for i in rslt:
-           #i.find('li', {'class':'next'}) 
-           print(i)
-      print(rslt)
+def scan_page (urlnbrdepage):
+   i = 1 
+   while 1: 
+      response = requests.get(urlnbrdepage)
+      if response.ok:
+         scanp.append(urlnbrdepage)
+         soup = BeautifulSoup(response.text, 'html.parser')
+         if  soup.find('li', {'class':'next'})  is not None:
+            urlnbrdepage = urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)        
+            scanp.append(urlnbrdepage)
+            i += 1
+            
+         else:
+            return
 
 
-scan_page()
+
+scan_page("http://books.toscrape.com/catalogue/category/books/sequential-art_5/")
+print(scanp)
