@@ -71,11 +71,18 @@ def scan ():
 #La fonction permet de savoir il s'est la dernire page ou non, puis enregistre les liens qui seront envoyé à la fonc scan
 def scan_page (urlnbrdepage):
    i = 1
+   # -tc- Evite le while 1, préfère while True
    while 1:
        response = requests.get(urlnbrdepage)
+       # -tc- Pour des questions d'encodage, passe plutôt response.content à BeautifulSoup
+       # -tc- N'oublie pas que gérer les erreurs de requests.
+       # -tc- Faire éventuellement une fonction dédiée à l'appel http
        soup = BeautifulSoup(response.text, 'html.parser')  
        if response.ok:
+          # -tc- scanp est une variable globale, à éviter absolument
+          # -tc- passer la liste scanp en argument de la fonction
           urlnbrdepage = scanp.append(urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)) 
+          # -tc- la première page est déjà celle que tu as récupé
           urlnbrdepage = urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)
           i +=1
           if  soup.find('li', {'class':'next'})  is None:
