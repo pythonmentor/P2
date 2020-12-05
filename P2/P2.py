@@ -45,11 +45,11 @@ def scraping (url):
    
    
 
-
-   with open("information.csv","w",newline="") as f:
-       ecriture = csv.writer(f)
-       ecriture.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
-       ecriture.writerow([infos[0], infos[3], infos[1], infos[4], infos[5], infos[6], infos[8], infos[2], infos[7], infos[9]])
+def enr():
+      with open("information.csv","w",newline="") as f:
+          ecriture = csv.writer(f)
+          ecriture.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+          ecriture.writerow([infos[0], infos[3], infos[1], infos[4], infos[5], infos[6], infos[8], infos[2], infos[7], infos[9]])
 
        #[print(str([i]) + '\n') for i in infos]
 
@@ -66,20 +66,20 @@ def scan ():
           
        
           print(livres)
+
  
 #La fonction permet de savoir il s'est la dernire page ou non, puis enregistre les liens qui seront envoyé à la fonc scan
 def scan_page (urlnbrdepage):
-   i = 1 
-   while 1: #On référence la page, tant qu'on trouve la class 'next' on incrémente la page puis on modifie directement sa valeur (Utilisation du module urlparse pour segementer l'url.
-      response = requests.get(urlnbrdepage)
-      if response.ok:         
-         soup = BeautifulSoup(response.text, 'html.parser')
-         if  soup.find('li', {'class':'next'})  is not None: 
-            urlnbrdepage = urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)        
-            scanp.append(urlnbrdepage)
-            i += 1
-            
-         else:
+   i = 1
+   while 1:
+       response = requests.get(urlnbrdepage)
+       soup = BeautifulSoup(response.text, 'html.parser')  
+       if response.ok:
+          urlnbrdepage = scanp.append(urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)) 
+          urlnbrdepage = urlnbrdepage.rpartition('/')[0] + "/page-{}.html".format(i)
+          i +=1
+          if  soup.find('li', {'class':'next'})  is None:
+            print(str(soup.find('li', {'class':'next'})))
             return
 
 # On scan les cats du site puis on les enregistre dans la cat
@@ -87,15 +87,22 @@ def scancat():
     response = requests.get(url3)
     if response.ok:
           soup = BeautifulSoup(response.text, 'html.parser')
-          cats = soup.find('ul', {'class':'nav nav-list'}).findAll('li')
+          cats = soup.find('ul', {'class':'nav nav-list'}).findAll('li')[1:] #on dicrimine le premier élément
           for i in cats:
-
               cat.append(url3 + i.find('a')['href'])
-          print(cat)
+      
     
 
-scancat () 
 
-scan_page("http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html")
-print(scanp)
 
+scancat() #On scan toutes les catégories
+#[print(str([i]) + '\n') for i in cat]
+
+
+#for i in cat:
+
+#    scan_page(i)
+#[print(str([i]) + '\n') for i in scanp]
+
+scan_page('http://books.toscrape.com/catalogue/category/books/mystery_3/index.html')
+[print(str([i]) + '\n') for i in scanp]
